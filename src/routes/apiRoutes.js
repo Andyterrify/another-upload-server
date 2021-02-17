@@ -2,6 +2,9 @@ import { Router } from "express";
 import multer, { diskStorage } from 'multer';
 
 import uploadController from '../controllers/uploadController'
+import shortUrlController from '../controllers/shortUrlController'
+
+// import uploadController from '../controllers/uploadController'
 
 const router = Router()
 const multerStorage = diskStorage({
@@ -17,5 +20,7 @@ const upload = multer({ storage: multerStorage })
 router.get('/', uploadController.newFile)
 router.get('/file/get', uploadController.getFile)
 router.post('/file/new', upload.single('image'), uploadController.newFile)
+
+router.post('/short-urls')
 
 export default router
