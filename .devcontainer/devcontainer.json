@@ -12,7 +12,8 @@
     "terminal.integrated.shell.linux": "/bin/bash"
   },
 
-  // Add the IDs of extensions you want installed when the container is created.
+  // Some good housekeeping extensions
+  // Can move them into a separate file if needed
   "extensions": [
     "dbaeumer.vscode-eslint",
     "mongodb.mongodb-vscode",
@@ -20,7 +21,6 @@
     "eamodio.gitlens",
     "kisstkondoros.vscode-gutter-preview",
     "byi8220.indented-block-highlighting",
-    "dbaeumer.jshint",
     "gamunu.vscode-yarn",
     "eg2.vscode-npm-script",
     "esbenp.prettier-vscode",

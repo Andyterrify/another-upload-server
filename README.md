@@ -10,16 +10,14 @@ Full-featured upload server for applications such as ShareX, supporting images, 
 <img alt="Express.js" src="https://img.shields.io/badge/express.js%20-%23404d59.svg?&style=for-the-badge"/>
 </p>
 
-
-
 ## Roadmap
 
- - Complete: ✅
- - In development: 👷‍♀️
- - Planned: 📋
+- Complete: ✅
+- In development: 👷‍♀️
+- Planned: 📋
 
 | Feature            | Status | Assigned to |
-|--------------------|--------|-------------|
+| ------------------ | ------ | ----------- |
 | API key generation | 👷‍♀️     | Andrei      |
 | Image Hosting      | 👷‍♀️     | Andrei      |
 | Text upload        | 📋     | Tom         |
@@ -30,12 +28,12 @@ Full-featured upload server for applications such as ShareX, supporting images, 
 | ShareX configs     | 📋     | -           |
 | systemd config     | 📋     | -           |
 
-
 ## Installation
 
 Installing the app is extremely simple:
 
 ### With NPM
+
 ```bash
 mkdir upload-server && cd "$_"
 git clone https://github.com/Andyterrify/another-upload-server.git .
@@ -45,6 +43,7 @@ npm run build
 ```
 
 ### With Yarn (Recommended over npm)
+
 ```bash
 mkdir upload-server && cd "$_"
 git clone https://github.com/Andyterrify/another-upload-server.git .
@@ -54,7 +53,12 @@ yarn build
 ```
 
 ### With Docker
-//TBA
+
+Container setup to run the app in VSCode with a MongoDB instance alongside.
+To run you require the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extention. Then `Ctrl-Shift-P` or press the `F1` to open the run menu and run `Rebuild and Reopen in Container`. This does not work through remote SSH sessions.
+
+Down the line I will provide a production ready compose file
 
 ## Running
-To run the app, simply use `npm run start` or `yarn start` - in the future we'll provide a systemd config to run it as a service.  For temporary installations we recommend using `tmux` or `screen`.
+
+To run the app, simply use `npm run start` or `yarn start` - in the future we'll provide a systemd config to run it as a service. For temporary installations we recommend using `tmux` or `screen`.
