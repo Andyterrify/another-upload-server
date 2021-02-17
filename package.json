@@ -10,9 +10,11 @@
   ],
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "argon2": "^0.27.1",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "helmet": "^4.4.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.16",
     "morgan": "^1.10.0",
     "multer": "^1.4.2"
