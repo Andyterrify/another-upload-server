@@ -55,7 +55,7 @@ yarn build
 ### With Docker
 
 Container setup to run the app in VSCode with a MongoDB instance alongside.
-To run you require the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extention. Then `Ctrl-Shift-P` or press the `F1` to open the run menu and run `Rebuild and Reopen in Container`. This does not work through remote SSH sessions.
+To run you require the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extention. Then `Ctrl-Shift-P` or press the key `F1` to open the run menu and run `Rebuild and Reopen in Container`. This does not work through remote SSH sessions.
 
 Down the line I will provide a production ready compose file
 
