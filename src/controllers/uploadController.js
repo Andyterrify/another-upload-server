@@ -1,5 +1,6 @@
 import { resolve } from 'path'
-import File from '../models/fileModel'
+// not implemented correctly, crashes app on launch
+// import File from '../models/fileModel'
 
 export default {
     newFile: async (req, res) => {
