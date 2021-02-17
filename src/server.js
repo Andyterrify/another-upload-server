@@ -16,7 +16,7 @@ app.use(bodyParser.json())
 app.use('/api/v1', authRouter)
 app.use('/api/v1', publicApiRouter)
 app.use('/api/v1', apiRouter)
-app.get('/:shortUrl', shortUrlController.read)
+app.get('/:shortUrl', shortUrlController.retrieve)
 
 app.listen()
 

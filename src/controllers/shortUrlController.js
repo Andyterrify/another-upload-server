@@ -2,7 +2,7 @@ export default {
     create: async (req, res) => {
 
     },
-    read: async (req, res) => {
+    retrieve: async (req, res) => {
         
     },
     update: async (req, res) => {
