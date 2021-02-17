@@ -1,3 +1,5 @@
+> This project is under development with no release date. Both of us don't have a lot of free time so we'll work on it whenever we can. We're both fed up with how bad all other ShareX upload servers are so we decided to make out own. If you're interested in this, please come back at a later date. Thank you
+
 # Yet another ShareX upload server
 
 Full-featured upload server for applications such as ShareX, supporting images, text, files & short urls.
