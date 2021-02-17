@@ -1,9 +1,19 @@
 import { Router } from "express";
 import multer, { diskStorage } from 'multer';
+import userController from "../controllers/userController";
+import verifyToken from '../middleware/verifyToken'
 
 // import uploadController from '../controllers/uploadController'
 
 const router = Router()
+
+/**
+ * This middleware is going to be checking for a valid token - you will need to comment it out until tokengen is sorted.
+ * In ANY of the controllers referenced here, you'll be able to use `req.decoded` to access the token (this is so we can verify
+ * whether it's a user token or a services token) 
+ */
+router.use(verifyToken)
+
 // const multerStorage = diskStorage({
 //     destination: (req, file, cb) => {
 //         cb(null, 'uploads');
@@ -46,5 +56,10 @@ router.post('/upload', upload2.single('image'), (req, res, next) => {
         console.log(error);
     }
 });
+
+//These routes will use the decoded JWT to access the correct user
+router.get('/user', userController.retrieve)
+router.patch('/user', userController.update)
+router.delete('/user', userController.delete)
 
 export default router

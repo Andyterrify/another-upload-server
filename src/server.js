@@ -4,6 +4,8 @@ import morgan from 'morgan'
 import bodyParser from 'body-parser'
 
 import apiRouter from './routes/apiRoutes'
+import publicApiRouter from './routes/publicApiRoutes'
+import authRouter from './routes/authRoutes'
 
 const app = express()
 
@@ -11,9 +13,9 @@ app.use(helmet())
 app.use(morgan('tiny'))
 app.use(bodyParser.json())
 
+app.use('/api/v1', authRouter)
+app.use('/api/v1', publicApiRouter)
 app.use('/api/v1', apiRouter)
-
-
 
 app.listen()
 
