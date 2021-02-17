@@ -1,10 +1,13 @@
 {
-  "name": "express-minimal-boilerplate",
-  "version": "1.0.0",
-  "description": "Simple & minimal ES6+ Express boilerplate",
-  "main": "index.js",
-  "repository": "https://github.com/tommitchelmore/express-minimal-boilerplate",
-  "author": "Thomas Mitchelmore",
+  "name": "another-upload-server",
+  "version": "0.0.1",
+  "description": "Full-featured upload server for applications such as ShareX, supporting images, text, files & short urls.",
+  "main": "dist/index.js",
+  "repository": "https://github.com/Andyterrify/another-upload-server",
+  "author": "Andrei Vasile <andreibvasile@gmail.com>",
+  "contributors": [
+    "Thomas Mitchelmore <tommitchelmore@outlook.com> (https://tommitchelmore.com)"
+  ],
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "body-parser": "^1.19.0",
