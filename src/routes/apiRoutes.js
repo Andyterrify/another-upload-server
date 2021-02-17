@@ -1,6 +1,8 @@
 import { Router } from "express";
 import multer, { diskStorage } from 'multer';
 
+import shortUrlController from '../controllers/shortUrlController'
+
 // import uploadController from '../controllers/uploadController'
 
 const router = Router()
@@ -46,5 +48,7 @@ router.post('/upload', upload2.single('image'), (req, res, next) => {
         console.log(error);
     }
 });
+
+router.post('/short-urls')
 
 export default router
