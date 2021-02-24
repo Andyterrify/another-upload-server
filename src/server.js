@@ -13,7 +13,7 @@ app.use(helmet())
 app.use(morgan('tiny'))
 app.use(bodyParser.json())
 
-app.use('/api/v1', authRouter)
+app.use('/auth', authRouter)
 app.use('/api/v1', publicApiRouter)
 app.use('/api/v1', apiRouter)
 // app.get('/:shortUrl', shortUrlController.retrieve)
