@@ -31,16 +31,24 @@ services:
     image: mongo:latest
     restart: unless-stopped
     volumes:
-      - mongodb-data-upload-server:/data/db
+      - mongodb-data:/data/db
 
     # Uncomment to change startup options
-    # environment:
+    environment:
     #  MONGO_INITDB_ROOT_USERNAME: root
     #  MONGO_INITDB_ROOT_PASSWORD: example
-    #  MONGO_INITDB_DATABASE: your-database-here
+     MONGO_INITDB_DATABASE: node
 
     # Add "forwardPorts": ["27017"] to **devcontainer.json** to forward MongoDB locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
+  mongo-express:
+    image: mongo-express
+    network_mode: service:db
+    environment:
+      # - ME_CONFIG_ADMINUSERNAME=root
+      # - ME_CONFIG_ADMINPASSWORD=example
+      - ME_CONFIG_MONGODB_SERVER=db
+
 volumes:
-  mongodb-data-upload-server:
+  mongodb-data:

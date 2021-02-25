@@ -12,8 +12,7 @@
     "terminal.integrated.shell.linux": "/bin/bash"
   },
 
-  // Some good housekeeping extensions
-  // Can move them into a separate file if needed
+  // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
     "dbaeumer.vscode-eslint",
     "mongodb.mongodb-vscode",
@@ -25,11 +24,13 @@
     "eg2.vscode-npm-script",
     "esbenp.prettier-vscode",
     "natqe.reload",
-    "visualstudioexptteam.vscodeintellicode"
+    "visualstudioexptteam.vscodeintellicode",
+    "42crunch.vscode-openapi"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [3000, 27017],
+  //   "forwardPorts": [3000, 27017, 8081],
+  "forwardPorts": [8081, 27017],
 
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "yarn install",
