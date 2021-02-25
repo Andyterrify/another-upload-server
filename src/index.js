@@ -6,8 +6,14 @@ import mongoose from 'mongoose'
 
 dotenv.config({ path: resolve(__dirname, "../.env") })
 
+// additions to fix deprecation warnings
+// non-existent property `MongoError` can be ignored until new mongodb driver is released
+// https://mongoosejs.com/docs/deprecations.html
 mongoose.connect(process.env.MONGODB_URL, {
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
 });
 
 const db = mongoose.connection
