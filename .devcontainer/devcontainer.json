@@ -1,0 +1,39 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/javascript-node-mongo
+// Update the VARIANT arg in docker-compose.yml to pick a Node.js version: 10, 12, 14
+{
+  "name": "Node.js & Mongo DB",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+
+  // Some good housekeeping extensions
+  // Can move them into a separate file if needed
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "mongodb.mongodb-vscode",
+    "codezombiech.gitignore",
+    "eamodio.gitlens",
+    "kisstkondoros.vscode-gutter-preview",
+    "byi8220.indented-block-highlighting",
+    "gamunu.vscode-yarn",
+    "eg2.vscode-npm-script",
+    "esbenp.prettier-vscode",
+    "natqe.reload",
+    "visualstudioexptteam.vscodeintellicode"
+  ],
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [3000, 27017],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "yarn install",
+
+  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "node"
+}
