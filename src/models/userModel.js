@@ -1,10 +1,29 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model } from 'mongoose';
 
 const userSchema = Schema({
-    username: { type: String, unique: true, require: true },
-    displayName: { type: String, require: true },
-    password: { type: String, require: true },
-    email: String // don't want to force the user to have a password, or at least not yet
-})
+  username: {
+    type: String,
+    unique: true,
+    require: true,
+  },
+  displayName: {
+    type: String,
+    require: true,
+  },
+  password: {
+    type: String,
+    require: true,
+  },
+  email: String,
+  accountCreated: {
+    type: Date,
+    default: Date.now,
+  },
+  access: {
+    type: String,
+    enum: ['admin', 'basic'],
+    default: 'basic',
+  },
+});
 
-export default model('User', userSchema)
+export default model('User', userSchema);

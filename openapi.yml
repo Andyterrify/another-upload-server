@@ -17,24 +17,29 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username: 
-                  type: string
-                password:
-                  type: string
-                displayName:
-                  type: string
-                email:
-                  type: string
-
+              $ref: "#/components/schemas/User"
       responses:
         "201":
           description: User created successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
         "400":
-          description: Not enough data provided
+          description: Not enough data provided by client
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+                    example: "Missing field 'username'"
         "409":
-          description: User already exists
+          description: Account with provided data is already registered
           content:
             application/json:
               schema:
@@ -42,5 +47,44 @@ paths:
                 properties:
                   error:
                     type: string
-                example:
-                  error: An account with that field 'username' already exists.
+                    example: An account with fild 'jeff5234' already exists
+
+components:
+  schemas:
+    User:
+      properties:
+        id:
+          type: string
+          uniqueItems: true
+          readOnly: true
+        username:
+          type: string
+          minLength: 1
+          example: "jeff5234"
+        displayName:
+          type: string
+          minLength: 1
+          example: "Jeff Winger"
+        password:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          example: "jeff@example.com"
+        accountCreated:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2017-07-21T17:32:28Z"
+        access:
+          type: string
+          enum:
+            - admin
+            - basic
+          default: basic
+          readOnly: true
+      required:
+        - username
+        - displayName
+        - password
