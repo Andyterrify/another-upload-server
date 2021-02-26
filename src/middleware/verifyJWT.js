@@ -7,12 +7,12 @@ function verify(req, res, next) {
 
   if (token == null) return res.sendStatus(Unauthorized);
 
-  jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, user) => {
+  // TODO: maybe have two separate tokens, one for dash and one for api? check in here
+  req.user = jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, user) => {
     if (err) return res.status(Forbidden).json({ err });
-    req.user = user;
-    return next();
+    return user;
   });
-  return null; // TODO: NOT CORRECT
+  return next();
 }
 
 export default verify;
