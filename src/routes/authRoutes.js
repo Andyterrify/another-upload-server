@@ -1,10 +1,13 @@
-import { Router } from "express";
-import authController from "../controllers/authController";
-import checkFormData from "../middleware/checkFormData"
+import { Router } from 'express';
+import authController from '../controllers/authController';
+import checkFormData from '../middleware/checkFormData';
+import verifyJWT from '../middleware/verifyJWT';
 
-const router = Router()
+const router = Router();
 
-router.post('/register', checkFormData.register, authController.register)
-router.post('/login', authController.login)
+// router.post('/register', checkFormData.register, authController.register);
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+router.post('/verify', verifyJWT, authController.verify);
 
-export default router
+export default router;
