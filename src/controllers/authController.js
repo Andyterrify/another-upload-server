@@ -1,53 +1,62 @@
-import argon from 'argon2';
+import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import {
-  Created, Forbidden, NoContent, OK, Unauthorized,
+  Created, OK, Unauthorized, NoContent, InternalServerError,
 } from '../utils/codes';
-import userModel from '../models/userModel';
+import userSchema from '../models/userModel';
 import createAccessToken from '../utils/createAccessToken';
-
-let refreshTokens = [];
+import hashToken from '../utils/hashToken';
 
 export default {
   register: async (req, res) => {
-  // try {
-  //   const user = await userModel.create({
-  //     username: req.body.username,
-  //     displayName: req.body.displayName,
-  //     email: req.body.email,
-  //     password: await argon.hash(req.body.password),
-  //   });
-  //   // TODO: Need to return a JWT
-
-    //   return res.status(codes.Created).json(jwt.create(user));
-    // } catch (err) {
-    //   // implement other errors
-    //   console.log(err);
-    //   return res.status(codes.InternalServerError).json(err);
+    try {
+      await userSchema.create({
+        username: req.body.username,
+        displayName: req.body.displayName,
+        email: req.body.email,
+        password: await argon2.hash(req.body.password),
+      });
+    } catch (err) {
+      return res.sendStatus(InternalServerError);
+    }
+    return res.sendStatus(Created);
   },
   login: async (req, res) => {
-    const user = { name: req.body.username };
+    if (!await argon2.verify(req.dbUser.password, req.body.password)) {
+      return res.status(Unauthorized).json({ error: 'Password does not match' });
+    }
 
-    const accessToken = createAccessToken(user);
-    const refreshToken = jwt.sign(user, process.env.JWT_REFRESH_SECRET);
-    refreshTokens.push(refreshToken);
+    // ! Somehow ending with less entries than there should be?
+    // ! in 10 requests there are less than 10 hashes on the server
+    const accessToken = createAccessToken(req.dbUser);
+    const refreshToken = jwt.sign({ id: req.dbUser.id }, process.env.JWT_REFRESH_SECRET);
+    const hashedToken = hashToken(refreshToken);
 
+    try {
+      await userSchema.findByIdAndUpdate(req.dbUser.id,
+        { $addToSet: { refreshTokens: hashedToken } }).exec();
+    } catch (err) {
+      if (err) return res.status(InternalServerError).json(err);
+    }
     return res.status(Created).json({ accessToken, refreshToken });
   },
-  verify: async (req, res) => res.json({ status: 'Successfully Verified', user: req.user.name }),
+  verify: async (req, res) => res.json({ status: 'Successfully Verified', id: req.dbUserId }),
   refresh: async (req, res) => {
-    const refreshToken = req.body.token;
-    if (refreshToken == null) return res.sendStatus(Unauthorized);
-    if (!refreshTokens.includes(refreshToken)) return res.sendStatus(Forbidden);
+    // TODO: Wrap in try
+    const dbUser = await userSchema.findById(req.dbUserId).exec();
+    const dbTokens = dbUser.refreshTokens;
+    const hashedToken = hashToken(req.body.token);
+    if (!dbTokens.includes(hashedToken)) return res.sendStatus(Unauthorized);
 
-    const accessToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
-      if (err) return res.status(Forbidden).json(err);
-      return createAccessToken(user);
-    });
-    res.status(OK).json(accessToken);
+    const accessToken = createAccessToken(dbUser);
+    return res.status(OK).json(accessToken);
   },
   logout: async (req, res) => {
-    refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
-    res.sendStatus(NoContent);
+    // TODO: Wrap in try
+    await userSchema.findByIdAndUpdate(req.dbUserId,
+      { $pull: { refreshTokens: hashToken(req.body.token) } }, (err) => {
+        if (err) return res.sendStatus(InternalServerError);
+        return res.sendStatus(NoContent);
+      });
   },
 };

@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 
-export function createAccessToken(user) {
+async function createAccessToken(user) {
   return jwt.sign(
-    { user: user.name },
+    { id: user.id },
     process.env.JWT_ACCESS_SECRET,
-    { expiresIn: '20s' },
+    { expiresIn: '20d' },
   );
 }
 
