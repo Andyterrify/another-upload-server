@@ -1,0 +1,32 @@
+###
+POST http://localhost:3000/api/v1/auth/register
+
+###
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "username": "testUser",
+    "password": "testPassword"
+}
+
+###
+POST http://localhost:3000/api/v1/auth/verify
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidGVzdFVzZXIiLCJpYXQiOjE2MTQzNjQ3ODIsImV4cCI6MTYxNDM2NDgwMn0.ZkRIYWZmxbU9GWVTq61tZrwOIUYaCN8VanIf0fdPO5g
+
+###
+POST http://localhost:3000/api/v1/auth/refresh
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE2MTQzNjQ3NjF9.FVW2KrxkGX6M3M3RHRr8fxW_9BTOOX58kTjt-wu9No4"
+}
+
+
+###
+DELETE http://localhost:3000/api/v1/auth/logout
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdFVzZXIiLCJpYXQiOjE2MTQzNjQ3NjF9.FVW2KrxkGX6M3M3RHRr8fxW_9BTOOX58kTjt-wu9No4"
+}
