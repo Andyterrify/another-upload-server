@@ -24,8 +24,6 @@ const userSchema = Schema({
     enum: ['admin', 'basic'],
     default: 'basic',
   },
-  refreshTokens: [String],
-  blacklistedApiTokens: [{ type: String }],
 });
 
 export default model('User', userSchema);

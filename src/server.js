@@ -1,7 +1,6 @@
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import bodyParser from 'body-parser';
 
 import apiRouter from './routes/apiRoutes';
 import publicApiRouter from './routes/publicApiRoutes';
