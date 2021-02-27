@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 
 import apiRouter from './routes/apiRoutes';
 import publicApiRouter from './routes/publicApiRoutes';
@@ -10,8 +11,8 @@ const app = express();
 
 app.use(helmet());
 app.use(morgan('tiny'));
-// app.use(bodyParser.json());
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1', publicApiRouter);
