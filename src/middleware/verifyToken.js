@@ -5,6 +5,7 @@ import {
 import mongo from '../utils/dbMongo';
 import hashToken from '../utils/hashToken';
 import userModel from '../models/userModel';
+import blackAccToken from '../models/blackAccToken';
 
 const pattern = /(?<=Bearer )([a-zA-Z0-9-_]+.[a-zA-Z0-9-_]+.[a-zA-Z0-9-_]+)/g;
 
@@ -14,10 +15,19 @@ function access(req, res, next) {
   if (!req.headers.authorization) return res.status(BadRequest).json({ error: 'Missing token' });
   try {
     const token = req.headers.authorization.match(pattern)[0];
-    req.dbUserId = jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, user) => {
-      if (err) return res.status(Forbidden).json({ error: 'Invalid token' });
-      return user.id;
-    });
+
+    try {
+      jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+    } catch (err) {
+      return res.status(Unauthorized).json({ message: 'Invalid token' });
+    }
+
+    try {
+      if (blackAccToken.findOne({ token })) return res.status(Unauthorized).json({ message: 'Invalid token' });
+    } catch (err) {
+      return res.status(InternalServerError).json(err);
+    }
+
     return next();
   } catch (err) {
     return res.sendStatus(InternalServerError);

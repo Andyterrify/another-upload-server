@@ -8,6 +8,7 @@ import createToken from '../utils/createToken';
 import mongo from '../utils/dbMongo';
 import getExpiryDate from '../utils/getExpiryDate';
 import hashToken from '../utils/hashToken';
+import blackAccToken from '../models/blackAccToken';
 
 export default {
   register: async (req, res) => {
@@ -30,9 +31,6 @@ export default {
     }
 
     // Authenticated
-
-    // ! Somehow ending with less entries than there should be?
-    // ! in 10 requests there are less than 10 hashes on the server
     const accessToken = createToken.access(req.user);
     const refreshToken = await createToken.refresh(req.user);
 
@@ -61,15 +59,28 @@ export default {
     const accessToken = createToken.access(req.user);
     const refreshToken = await createToken.refresh(req.user);
 
-    return res.status(Created).cookie('refreshCookie', refreshToken,
-      { httpOnly: true }).json({ accessToken });
+    // return res.status(Created).cookie('refreshCookie', refreshToken,
+    //   { httpOnly: true }).json({ accessToken });
+    return res.status(Created).cookie('refreshCookie', refreshToken).json({ accessToken });
   },
   logout: async (req, res) => {
     // TODO: Wrap in try
-    await userModel.findByIdAndUpdate(req.dbUserId,
-      { $pull: { refreshTokens: hashToken(req.body.token) } }, (err) => {
-        if (err) return res.sendStatus(InternalServerError);
-        return res.sendStatus(NoContent);
-      });
+    try {
+      req.token.delete();
+    } catch (err) {
+      return res.sendStatus(InternalServerError);
+    }
+
+    // try {
+    //   const accessToken = req.headers.authorization.split(' ')[1];
+    //   // jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
+    //   blackAccToken.create({ token: accessToken }).catch((err) => {
+    //     console.log('And here');
+    //   });
+    // } catch (err) {
+    //   console.log('Here');
+    //   return res.status(NoContent).clearCookie('accessCookie').clearCookie('refreshCookie');
+    // }
+    return res.clearCookie('refreshCookie').send();
   },
 };

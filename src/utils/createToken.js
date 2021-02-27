@@ -13,7 +13,7 @@ function access(user) {
       access: user.access,
     },
     process.env.JWT_ACCESS_SECRET,
-    { expiresIn: '20d' },
+    { expiresIn: '5d' },
   );
 }
 
