@@ -11,6 +11,6 @@ router.post('/refresh', verifyToken.refresh, authController.refresh);
 // router.post('/refresh', authController.refresh);
 router.delete('/logout', verifyToken.refresh, authController.logout);
 // Only to test
-router.post('/verify', verifyToken.refresh, authController.verify);
+router.post('/verify', verifyToken.access, authController.verify);
 
 export default router;

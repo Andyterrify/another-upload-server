@@ -3,7 +3,7 @@ import {
   Created, InternalServerError,
 } from '../utils/codes';
 import createToken from '../utils/createToken';
-import db from '../utils/dbMongo';
+import { findByUsername } from '../utils/dbMongo';
 import clientErrors from '../utils/responses/clientErrors';
 import clientResponses from '../utils/responses/clientResponses';
 import serverErrors from '../utils/responses/serverErrors';
@@ -20,7 +20,7 @@ export default {
   },
   login: async (req, res) => {
     try {
-      const user = await db.findByUsername(req.body.username);
+      const user = await findByUsername(req.body.username);
       if (!user) return clientErrors.userDoesNotExist;
       req.user = user;
     } catch (err) {
@@ -32,7 +32,7 @@ export default {
     }
 
     // Authenticated
-    const accessToken = createToken.access(req.user);
+    const accessToken = await createToken.access(req.user);
     const refreshToken = await createToken.refresh(req.user);
 
     return clientResponses.authenticated(res, accessToken, refreshToken);
@@ -47,21 +47,15 @@ export default {
     });
   },
   refresh: async (req, res) => {
-    // TODO: Wrap in try
-
     try {
       req.token.delete();
     } catch (err) {
-      return res.sendStatus(InternalServerError);
+      return serverErrors.serverError(res, err);
     }
-    // removed old refresh cookie
-
-    const accessToken = createToken.access(req.user);
+    const accessToken = await createToken.access(req.user);
     const refreshToken = await createToken.refresh(req.user);
 
-    // return res.status(Created).cookie('refreshCookie', refreshToken,
-    //   { httpOnly: true }).json({ accessToken });
-    return res.status(Created).cookie('refreshCookie', refreshToken).json({ accessToken });
+    return clientResponses.authenticated(res, accessToken, refreshToken);
   },
   logout: async (req, res) => {
     // TODO: Wrap in try
@@ -71,16 +65,6 @@ export default {
       return res.sendStatus(InternalServerError);
     }
 
-    // try {
-    //   const accessToken = req.headers.authorization.split(' ')[1];
-    //   // jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
-    //   blackAccToken.create({ token: accessToken }).catch((err) => {
-    //     console.log('And here');
-    //   });
-    // } catch (err) {
-    //   console.log('Here');
-    //   return res.status(NoContent).clearCookie('accessCookie').clearCookie('refreshCookie');
-    // }
     return res.clearCookie('refreshCookie').send();
   },
 };

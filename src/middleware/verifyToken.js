@@ -1,31 +1,37 @@
 import jwt from 'jsonwebtoken';
 import {
-  BadRequest, Forbidden, InternalServerError, Unauthorized,
+  BadRequest, InternalServerError, Unauthorized,
 } from '../utils/codes';
-import mongo from '../utils/dbMongo';
-import hashToken from '../utils/hashToken';
-import userModel from '../models/userModel';
-import blackAccToken from '../models/blackAccToken';
+import { findBlacklistedToken, findRefreshToken, findUserById } from '../utils/dbMongo';
+import extractToken from '../utils/extractToken';
+// import hashToken from '../utils/hashToken';
+// import userModel from '../models/userModel';
+import clientErrors from '../utils/responses/clientErrors';
+import serverErrors from '../utils/responses/serverErrors';
 
-const pattern = /(?<=Bearer )([a-zA-Z0-9-_]+.[a-zA-Z0-9-_]+.[a-zA-Z0-9-_]+)/g;
-
-// TODO: Make async
-// TODO: Add user to req.user
-function access(req, res, next) {
+async function access(req, res, next) {
   if (!req.headers.authorization) return res.status(BadRequest).json({ error: 'Missing token' });
   try {
-    const token = req.headers.authorization.match(pattern)[0];
+    const token = await extractToken(req.headers.authorization);
 
+    // validate
     try {
       jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     } catch (err) {
-      return res.status(Unauthorized).json({ message: 'Invalid token' });
+      return clientErrors.invalidToken(res);
     }
-
+    // check blacklisted
     try {
-      if (blackAccToken.findOne({ token })) return res.status(Unauthorized).json({ message: 'Invalid token' });
+      const tok = await findBlacklistedToken(token);
+      if (tok) return clientErrors.permissionDenied(res);
     } catch (err) {
       return res.status(InternalServerError).json(err);
+    }
+    // get associated user
+    try {
+      req.user = await findUserById(jwt.decode(token).id);
+    } catch (err) {
+      return serverErrors.serverError(res, err);
     }
 
     return next();
@@ -35,7 +41,7 @@ function access(req, res, next) {
 }
 
 async function refresh(req, res, next) {
-  if (!req.cookies.refreshCookie) return res.status(BadRequest).json({ error: 'Missing cookie' });
+  if (!req.cookies.refreshCookie) return clientErrors.missingCookie(res);
   const token = req.cookies.refreshCookie;
 
   // TODO: Sanitize
@@ -47,10 +53,10 @@ async function refresh(req, res, next) {
   }
 
   try {
-    const dbToken = await mongo.findRefreshToken(hashToken(token));
-    if (!dbToken) return res.status(Unauthorized).json({ message: 'Invalid token' });
+    const dbToken = await findRefreshToken(token);
+    if (!dbToken) return clientErrors.invalidToken(res);
 
-    const user = await userModel.findById(dbToken.userId).exec();
+    const user = await findUserById(dbToken.userId);
     req.user = user;
     req.token = dbToken;
 
