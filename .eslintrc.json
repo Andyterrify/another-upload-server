@@ -12,5 +12,6 @@
     "sourceType": "module"
   },
   "plugins": ["react"],
-  "rules": {}
+  "rules": {},
+  "ignorePatterns": ["tests/**"]
 }
