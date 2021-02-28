@@ -1,18 +1,17 @@
 import argon2 from 'argon2';
-import {
-  Created, InternalServerError,
-} from '../utils/codes';
+import { InternalServerError } from '../utils/codes';
 import createToken from '../utils/createToken';
-import { findByUsername } from '../utils/dbMongo';
+import { findByUsername, createUser, createBlacklistedToken } from '../utils/dbMongo';
 import clientErrors from '../utils/responses/clientErrors';
 import clientResponses from '../utils/responses/clientResponses';
 import serverErrors from '../utils/responses/serverErrors';
+import extractToken from '../utils/extractToken';
 
 export default {
   register: async (req, res) => {
     try {
-      if (await db.findByUsername(req.body.username)) return clientErrors.userExists(res);
-      await db.createUser(req);
+      if (await findByUsername(req.body.username)) return clientErrors.userExists(res);
+      await createUser(req);
       return clientResponses.userCreated(res);
     } catch (err) {
       return serverErrors.serverError(res, err);
@@ -21,7 +20,7 @@ export default {
   login: async (req, res) => {
     try {
       const user = await findByUsername(req.body.username);
-      if (!user) return clientErrors.userDoesNotExist;
+      if (!user) return clientErrors.userDoesNotExist(res);
       req.user = user;
     } catch (err) {
       return serverErrors.serverError(res, err);
@@ -44,6 +43,7 @@ export default {
       status: 'Successfully Verified',
       user: req.user,
       refreshToken: req.cookies.refreshCookie,
+      accessToken: req.headers.authorization,
     });
   },
   refresh: async (req, res) => {
@@ -58,7 +58,17 @@ export default {
     return clientResponses.authenticated(res, accessToken, refreshToken);
   },
   logout: async (req, res) => {
-    // TODO: Wrap in try
+    // invalidate access token
+    try {
+      if (req.headers.authorization) {
+        const token = await extractToken(req.headers.authorization);
+        createBlacklistedToken(token);
+      }
+    } catch (err) {
+      return serverErrors.serverError(res, err);
+    }
+
+    // invalidate refresh token
     try {
       req.token.delete();
     } catch (err) {

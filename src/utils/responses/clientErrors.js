@@ -7,7 +7,10 @@ export default {
     error: `Missing field '${field}'`,
   }),
   userExists: async (res) => res.status(Conflict).json({ error: 'User exists' }),
-  userDoesNotExist: async (res) => res.status(NotFound).json({ error: 'User does dor exist' }),
+  userDoesNotExist: async (res) => {
+    console.log('Here');
+    res.status(NotFound).json({ error: 'User does dor exist' });
+  },
   passwordsDoNotMatch: async (res) => res.status(Unauthorized).json({ error: 'Password does not match' }),
   missingCookie: async (res) => res.status(BadRequest).json({ error: 'Missing cookie' }),
   invalidToken: (res) => res.status(Unauthorized).json({ error: 'Invalid token' }),

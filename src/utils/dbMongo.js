@@ -57,6 +57,14 @@ async function createRefreshToken(tokenData) {
   });
 }
 
+async function createBlacklistedToken(token) {
+  return new Promise((resolve, reject) => {
+    blackAccToken.create({ token }).then((tok) => resolve(tok)).catch((err) => {
+      reject(err);
+    });
+  });
+}
+
 async function findBlacklistedToken(token) {
   return new Promise((resolve, reject) => blackAccToken.findOne({ token }, (err, found) => {
     if (err) return reject(err);
@@ -71,4 +79,5 @@ export {
   findUserById,
   findByUsername,
   findBlacklistedToken,
+  createBlacklistedToken,
 };
