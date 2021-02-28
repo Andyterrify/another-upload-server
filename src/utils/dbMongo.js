@@ -3,6 +3,15 @@ import refreshTokenModel from '../models/refreshTokenModel';
 import userModel from '../models/userModel';
 import serverErrors from './responses/serverErrors';
 
+async function findByUsername(username) {
+  return new Promise((resolve, reject) => {
+    userModel.findOne({ username }, (err, user) => {
+      if (err) reject(err);
+      resolve(user);
+    });
+  });
+}
+
 export default {
   createUser: async (req) => {
     const hashPassword = await argon2.hash(req.body.password);
@@ -20,23 +29,23 @@ export default {
       });
     });
   },
-  findUserUsername: async (req) => new Promise((resolve, reject) => {
-    try {
-      // TODO: Change to find by ID once you get cookies implemented
-      const user = userModel.findOne({ username: req.body.username }).exec();
-      resolve(user);
-    } catch (err) {
-      reject(err);
-    }
-  }),
-  findRefreshToken: async (tokenHash) => new Promise((resolve, reject) => {
-    try {
-      const refreshToken = refreshTokenModel.findOne({ tokenHash }).exec();
-      resolve(refreshToken);
-    } catch (err) {
-      reject(err);
-    }
-  }),
+  // findUserUsername: async (req) => new Promise((resolve, reject) => {
+  //   try {
+  //     // TODO: Change to find by ID once you get cookies implemented
+  //     const user = userModel.findOne({ username: req.body.username }).exec();
+  //     resolve(user);
+  //   } catch (err) {
+  //     reject(err);
+  //   }
+  // }),
+  // findRefreshToken: async (tokenHash) => new Promise((resolve, reject) => {
+  //   try {
+  //     const refreshToken = refreshTokenModel.findOne({ tokenHash }).exec();
+  //     resolve(refreshToken);
+  //   } catch (err) {
+  //     reject(err);
+  //   }
+  // }),
   createRefreshToken: async (tokenData) => new Promise((resolve, reject) => {
     refreshTokenModel.create(tokenData).then((token) => {
       resolve(token);
@@ -44,17 +53,5 @@ export default {
       reject(err);
     });
   }),
-  findByUsername: async (username) => new Promise((resolve, reject) => {
-    userModel.findOne({ username }, (err, user) => {
-      if (err) reject(err);
-      resolve(user);
-    });
-  }),
-  userExists: async (username) => new Promise((resolve, reject) => {
-    userModel.findOne({ username }, (err, user) => {
-      if (err) reject(err);
-      if (user === null) resolve(false);
-      resolve(true);
-    });
-  }),
+  findByUsername,
 };
