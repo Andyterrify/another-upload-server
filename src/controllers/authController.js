@@ -1,27 +1,26 @@
 import argon2 from 'argon2';
-import jwt from 'jsonwebtoken';
-import refreshTokenModel from '../models/refreshTokenModel';
 import {
-  Created, OK, Unauthorized, NoContent, InternalServerError, NotFound,
+  Created, InternalServerError, Unauthorized,
 } from '../utils/codes';
 import createToken from '../utils/createToken';
-import mongo from '../utils/dbMongo';
-import getExpiryDate from '../utils/getExpiryDate';
-import hashToken from '../utils/hashToken';
-import blackAccToken from '../models/blackAccToken';
+import db from '../utils/dbMongo';
+import clientResponses from '../utils/responses/clientResponses';
+import serverErrors from '../utils/responses/serverErrors';
+import clientErrors from '../utils/responses/clientErrors';
 
 export default {
   register: async (req, res) => {
     try {
-      const user = await mongo.createUser(req);
-      res.status(Created).json({ user });
+      if (await db.userExists(req.body.username)) return clientErrors.userExists(res);
+      await db.createUser(req);
+      return clientResponses.userCreated(res);
     } catch (err) {
-      res.status(InternalServerError).json(err);
+      return serverErrors.serverError(res, err);
     }
   },
   login: async (req, res) => {
     try {
-      req.user = await mongo.findUserUsername(req);
+      req.user = await db.findUserUsername(req.body.username);
     } catch (err) {
       return res.status(InternalServerError).json(err);
     }

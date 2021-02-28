@@ -1,6 +1,7 @@
 import argon2 from 'argon2';
 import refreshTokenModel from '../models/refreshTokenModel';
 import userModel from '../models/userModel';
+import serverErrors from './responses/serverErrors';
 
 export default {
   createUser: async (req) => {
@@ -41,6 +42,19 @@ export default {
       resolve(token);
     }).catch((err) => {
       reject(err);
+    });
+  }),
+  findByUsername: async (username) => new Promise((resolve, reject) => {
+    userModel.findOne({ username }, (err, user) => {
+      if (err) reject(err);
+      resolve(user);
+    });
+  }),
+  userExists: async (username) => new Promise((resolve, reject) => {
+    userModel.findOne({ username }, (err, user) => {
+      if (err) reject(err);
+      if (user === null) resolve(false);
+      resolve(true);
     });
   }),
 };
