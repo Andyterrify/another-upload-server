@@ -10,7 +10,7 @@
   ],
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "argon2": "^0.27.1",
+    "argon2": "^0.27.2",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "helmet": "^4.4.1",
